@@ -21,16 +21,25 @@ function collectPlaceholders(content: string): string[] {
   return [...new Set(matches.map((m) => m.slice(2, -2)))];
 }
 
-export async function install(repo: string, agent: string) {
-  console.log(chalk.blue(`Installing skills from ${repo} for ${agent}...`));
+export async function install(repo: string, agent: string, skillName?: string) {
+  const target = skillName ? `${repo}/${skillName}` : repo;
+  console.log(chalk.blue(`Installing skills from ${target} for ${agent}...`));
 
   const skillDir = getSkillDir(agent);
   fs.mkdirSync(skillDir, { recursive: true });
 
-  const skills = await fetchSkills(repo, agent);
+  let skills = await fetchSkills(repo, agent);
   if (skills.length === 0) {
     console.log(chalk.yellow("No skills found in the repo."));
     return;
+  }
+
+  if (skillName) {
+    skills = skills.filter((s) => s.name === skillName);
+    if (skills.length === 0) {
+      console.log(chalk.yellow(`Skill "${skillName}" not found in ${repo}/${agent}/`));
+      return;
+    }
   }
 
   // 收集所有 skill 里用到的占位符

@@ -15,16 +15,18 @@ program
   .command("install <repo>")
   .description('Install skills from a GitHub repo (e.g. "eyu1988/agent-skills")')
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
+  .option("-s, --skill <skill>", "Install a single skill by name")
   .action(async (repo, opts) => {
-    await install(repo, opts.agent);
+    await install(repo, opts.agent, opts.skill);
   });
 
 program
   .command("update <repo>")
   .description("Update installed skills from a GitHub repo")
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
+  .option("-s, --skill <skill>", "Update a single skill by name")
   .action(async (repo, opts) => {
-    await install(repo, opts.agent);
+    await install(repo, opts.agent, opts.skill);
   });
 
 program
