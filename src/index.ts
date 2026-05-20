@@ -2,6 +2,7 @@
 import { Command } from "commander";
 import { install } from "./commands/install";
 import { list } from "./commands/list";
+import { configSet, configList } from "./commands/config";
 
 const program = new Command();
 
@@ -32,6 +33,22 @@ program
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .action((opts) => {
     list(opts.agent);
+  });
+
+const config = program.command("config").description("Manage config variables for skill placeholders");
+
+config
+  .command("set <key> <value>")
+  .description("Set a config variable (e.g. CAPTURE_DIR, KNOWLEDGE_DIR)")
+  .action((key, value) => {
+    configSet(key, value);
+  });
+
+config
+  .command("list")
+  .description("List all config variables")
+  .action(() => {
+    configList();
   });
 
 program.parse();
