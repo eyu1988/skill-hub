@@ -10,12 +10,16 @@ export function list(agent: string) {
     return;
   }
 
-  const files = fs.readdirSync(skillDir).filter((f) => f.endsWith(".md"));
-  if (files.length === 0) {
-    console.log(chalk.yellow(`No skills found in ${skillDir}.`));
+  const skills = fs.readdirSync(skillDir).filter((f) => {
+    const stat = fs.statSync(`${skillDir}/${f}`);
+    return stat.isDirectory();
+  });
+
+  if (skills.length === 0) {
+    console.log(chalk.yellow(`No skills installed for ${agent}.`));
     return;
   }
 
   console.log(chalk.blue(`Skills for ${agent} (${skillDir}):\n`));
-  files.forEach((f) => console.log(chalk.green(`  • ${f}`)));
+  skills.forEach((f) => console.log(chalk.green(`  • ${f}`)));
 }

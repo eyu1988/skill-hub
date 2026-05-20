@@ -31,3 +31,12 @@ export async function fetchSkills(repo: string, agent: string): Promise<SkillDir
   const repoName = parts[1];
   return fetchDir(owner, repoName, agent);
 }
+
+export async function fetchSkillNames(repo: string, agent: string): Promise<string[]> {
+  const parts = repo.split("/");
+  const owner = parts[0];
+  const repoName = parts[1];
+  const apiUrl = `https://api.github.com/repos/${owner}/${repoName}/contents/${agent}`;
+  const { data } = await axios.get(apiUrl);
+  return data.filter((item: any) => item.type === "dir").map((item: any) => item.name);
+}

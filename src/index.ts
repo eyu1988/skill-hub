@@ -2,6 +2,8 @@
 import { Command } from "commander";
 import { install } from "./commands/install";
 import { list } from "./commands/list";
+import { remove } from "./commands/remove";
+import { search } from "./commands/search";
 import { configSet, configList } from "./commands/config";
 import { loadConfig } from "./utils/config";
 
@@ -44,6 +46,23 @@ program
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .action((opts) => {
     list(opts.agent);
+  });
+
+program
+  .command("remove")
+  .description("Remove an installed skill")
+  .requiredOption("-s, --skill <skill>", "Skill name to remove")
+  .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
+  .action((opts) => {
+    remove(opts.agent, opts.skill);
+  });
+
+program
+  .command("search [repo]")
+  .description("List available skills in a GitHub repo, defaults to DEFAULT_REPO")
+  .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
+  .action(async (repo, opts) => {
+    await search(resolveRepo(repo), opts.agent);
   });
 
 const config = program.command("config").description("Manage config variables for skill placeholders");
