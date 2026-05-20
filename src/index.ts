@@ -15,6 +15,12 @@ function resolveRepo(repo?: string): string {
   process.exit(1);
 }
 
+function resolveAgent(agent: string): string {
+  if (agent !== "claude") return agent;
+  const { defaultAgent } = loadConfig();
+  return defaultAgent ?? "claude";
+}
+
 const program = new Command();
 
 program
@@ -28,7 +34,7 @@ program
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .option("-s, --skill <skill>", "Install a single skill by name")
   .action(async (repo, opts) => {
-    await install(resolveRepo(repo), opts.agent, opts.skill);
+    await install(resolveRepo(repo), resolveAgent(opts.agent), opts.skill);
   });
 
 program
@@ -37,7 +43,7 @@ program
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .option("-s, --skill <skill>", "Update a single skill by name")
   .action(async (repo, opts) => {
-    await install(resolveRepo(repo), opts.agent, opts.skill);
+    await install(resolveRepo(repo), resolveAgent(opts.agent), opts.skill);
   });
 
 program
@@ -45,7 +51,7 @@ program
   .description("List installed skills")
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .action((opts) => {
-    list(opts.agent);
+    list(resolveAgent(opts.agent));
   });
 
 program
@@ -54,7 +60,7 @@ program
   .requiredOption("-s, --skill <skill>", "Skill name to remove")
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .action((opts) => {
-    remove(opts.agent, opts.skill);
+    remove(resolveAgent(opts.agent), opts.skill);
   });
 
 program
@@ -62,7 +68,7 @@ program
   .description("List available skills in a GitHub repo, defaults to DEFAULT_REPO")
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .action(async (repo, opts) => {
-    await search(resolveRepo(repo), opts.agent);
+    await search(resolveRepo(repo), resolveAgent(opts.agent));
   });
 
 const config = program.command("config").description("Manage config variables for skill placeholders");
