@@ -7,6 +7,8 @@ export function configSet(key: string, value: string) {
     config.defaultRepo = value;
   } else if (key === "DEFAULT_AGENT") {
     config.defaultAgent = value;
+  } else if (key === "GITHUB_TOKEN") {
+    config.githubToken = value;
   } else {
     config.vars[key] = value;
   }
@@ -18,9 +20,10 @@ export function configList() {
   const config = loadConfig();
   if (config.defaultRepo) console.log(chalk.blue(`DEFAULT_REPO  = ${config.defaultRepo}`));
   if (config.defaultAgent) console.log(chalk.blue(`DEFAULT_AGENT = ${config.defaultAgent}`));
-  if (config.defaultRepo || config.defaultAgent) console.log();
+  if (config.githubToken) console.log(chalk.blue(`GITHUB_TOKEN  = ****${config.githubToken.slice(-4)}`));
+  if (config.defaultRepo || config.defaultAgent || config.githubToken) console.log();
   const entries = Object.entries(config.vars);
-  if (entries.length === 0 && !config.defaultRepo && !config.defaultAgent) {
+  if (entries.length === 0 && !config.defaultRepo && !config.defaultAgent && !config.githubToken) {
     console.log(chalk.yellow("No config vars set. Use: skill-hub config set KEY VALUE"));
     return;
   }

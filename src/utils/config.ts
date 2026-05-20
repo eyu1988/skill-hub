@@ -8,6 +8,7 @@ export interface Config {
   vars: Record<string, string>;
   defaultRepo?: string;
   defaultAgent?: string;
+  githubToken?: string;
 }
 
 export function loadConfig(): Config {
