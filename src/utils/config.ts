@@ -6,6 +6,7 @@ const CONFIG_PATH = path.join(os.homedir(), ".skill-hub", "config.json");
 
 export interface Config {
   vars: Record<string, string>;
+  defaultRepo?: string;
 }
 
 export function loadConfig(): Config {

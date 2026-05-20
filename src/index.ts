@@ -3,6 +3,15 @@ import { Command } from "commander";
 import { install } from "./commands/install";
 import { list } from "./commands/list";
 import { configSet, configList } from "./commands/config";
+import { loadConfig } from "./utils/config";
+
+function resolveRepo(repo?: string): string {
+  if (repo) return repo;
+  const { defaultRepo } = loadConfig();
+  if (defaultRepo) return defaultRepo;
+  console.error("Error: <repo> is required or set a default with: skill-hub config set DEFAULT_REPO owner/repo");
+  process.exit(1);
+}
 
 const program = new Command();
 
@@ -12,21 +21,21 @@ program
   .version("0.1.0");
 
 program
-  .command("install <repo>")
-  .description('Install skills from a GitHub repo (e.g. "eyu1988/agent-skills")')
+  .command("install [repo]")
+  .description('Install skills from a GitHub repo (e.g. "eyu1988/agent-skills"), defaults to DEFAULT_REPO')
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .option("-s, --skill <skill>", "Install a single skill by name")
   .action(async (repo, opts) => {
-    await install(repo, opts.agent, opts.skill);
+    await install(resolveRepo(repo), opts.agent, opts.skill);
   });
 
 program
-  .command("update <repo>")
-  .description("Update installed skills from a GitHub repo")
+  .command("update [repo]")
+  .description("Update installed skills from a GitHub repo, defaults to DEFAULT_REPO")
   .option("-a, --agent <agent>", "Target agent: claude or codex", "claude")
   .option("-s, --skill <skill>", "Update a single skill by name")
   .action(async (repo, opts) => {
-    await install(repo, opts.agent, opts.skill);
+    await install(resolveRepo(repo), opts.agent, opts.skill);
   });
 
 program
