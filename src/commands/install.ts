@@ -10,15 +10,16 @@ export async function install(repo: string, agent: string) {
   const skillDir = getSkillDir(agent);
   fs.mkdirSync(skillDir, { recursive: true });
 
-  const skills = await fetchSkills(repo);
+  const skills = await fetchSkills(repo, agent);
   if (skills.length === 0) {
-    console.log(chalk.yellow("No .md skill files found in the repo."));
+    console.log(chalk.yellow("No skills found in the repo."));
     return;
   }
 
   for (const skill of skills) {
-    const dest = path.join(skillDir, skill.name);
-    fs.writeFileSync(dest, skill.content, "utf-8");
+    const skillDir2 = path.join(skillDir, skill.name);
+    fs.mkdirSync(skillDir2, { recursive: true });
+    fs.writeFileSync(path.join(skillDir2, "SKILL.md"), skill.content, "utf-8");
     console.log(chalk.green(`✓ ${skill.name}`));
   }
 
